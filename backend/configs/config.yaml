@@ -1,0 +1,6 @@
+# config.yaml - 配置示例
+server:
+  port: 8080
+
+logging:
+  level: "info"

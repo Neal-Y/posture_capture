@@ -1,0 +1,20 @@
+# .gitignore - Git 忽略文件
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+# Ignore Go binary files
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Ignore node_modules
+node_modules/
+
+# Ignore environment files
+.env
+
+# Ignore Docker files
+*.log
+docker-compose.override.yml

@@ -1,0 +1,3 @@
+# requirements.txt - Python 依賴
+fastapi
+uvicorn
