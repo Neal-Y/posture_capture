@@ -1,6 +1,0 @@
-// pose_service.go - 封裝業務邏輯
-package services
-
-func ProcessPoseData() {
-    // Implement business logic for processing pose data
-}
