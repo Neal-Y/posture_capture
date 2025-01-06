@@ -1,20 +1,16 @@
-// main.go - Go 主程序
 package main
 
 import (
-	"backend/internal/infrastructure"
 	"backend/internal/route"
 	"log"
+	"net/http"
 )
 
 func main() {
-	dbErr := infrastructure.InitMySQL()
-	if dbErr != nil {
-		log.Fatal(dbErr)
-	}
+	// 初始化 Gin 路由
+	router := route.InitRouter()
 
-	_, err := route.InitGinServer()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// 啟動伺服器
+	log.Println("Backend is running on :8080")
+	log.Fatal(http.ListenAndServe(":8080", router))
 }

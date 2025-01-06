@@ -1,16 +1,16 @@
-// gin.go - 初始化路由
 package route
 
 import (
-    "github.com/gin-gonic/gin"
-    "backend/internal/handlers"
+	"backend/internal/handlers"
+	"github.com/gin-gonic/gin"
 )
 
-// InitGinServer initializes the Gin server
-func InitGinServer() (*gin.Engine, error) {
-    router := gin.Default()
+// InitRouter initializes the API routes
+func InitRouter() *gin.Engine {
+	router := gin.Default()
 
-    handlers.SetupRouter(router)
+	// 定義 /analyze 路由
+	router.POST("/analyze", handlers.AnalyzeHandler)
 
-    return router, nil
+	return router
 }
