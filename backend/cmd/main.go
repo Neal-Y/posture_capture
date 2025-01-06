@@ -2,9 +2,19 @@
 package main
 
 import (
-    "fmt"
+	"backend/internal/infrastructure"
+	"backend/internal/route"
+	"log"
 )
 
 func main() {
-    fmt.Println("Hello, World!")
+	dbErr := infrastructure.InitMySQL()
+	if dbErr != nil {
+		log.Fatal(dbErr)
+	}
+
+	_, err := route.InitGinServer()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

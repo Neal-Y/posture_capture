@@ -1,1 +1,6 @@
+// ai_client.go - 調用 AI Service 的邏輯
+package clients
 
+func CallAIService() {
+    // Implement logic to call AI service
+}

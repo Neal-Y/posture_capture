@@ -1,1 +1,6 @@
+// pose_result.go - 數據模型
+package models
 
+type PoseResult struct {
+    // Define fields for pose result
+}

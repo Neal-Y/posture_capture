@@ -1,12 +1,9 @@
-# main.py - FastAPI 主入口
-from fastapi import FastAPI
+from flask import Flask
+from pose_api import pose_analysis
 
-app = FastAPI()
+app = Flask(__name__)
 
-@app.get("/")
-async def root():
-    return {"message": "Hello, World!"}
+app.register_blueprint(pose_analysis)
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8000)
