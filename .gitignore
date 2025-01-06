@@ -25,5 +25,3 @@ docker-compose.override.yml
 # Ignore .DS_Store
 .DS_Store
 
-# Ignore go.sum
-.
