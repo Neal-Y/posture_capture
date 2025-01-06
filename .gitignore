@@ -21,3 +21,9 @@ docker-compose.override.yml
 
 # Ignore .idea
 .idea
+
+# Ignore .DS_Store
+.DS_Store
+
+# Ignore go.sum
+.
