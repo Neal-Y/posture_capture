@@ -1,35 +1,22 @@
-from flask import Flask, request, jsonify
-import cv2
-import mediapipe as mp
-import numpy as np
+from flask import Blueprint, request, jsonify
+from app.core.pose_processor import PoseProcessor
 
-mp_pose = mp.solutions.pose
-pose = mp_pose.Pose()
+# 創建 Blueprint
+pose_api = Blueprint("pose_api", __name__)
 
-app = Flask(__name__)
+# 初始化 PoseProcessor
+pose_processor = PoseProcessor()
 
-@app.route('/analyze', methods=['POST'])
+@pose_api.route("/analyze", methods=["POST"])
 def analyze_pose():
-    # Assume image data is sent as a base64 encoded string
-    data = request.get_json()
-    image_data = data.get('image')
-    if not image_data:
-        return jsonify({'error': 'No image data provided'}), 400
+    """
+    接收上傳的圖像並進行姿勢分析
+    """
+    # 檢查是否有上傳圖像
+    image = request.files.get("image")
+    if not image:
+        return jsonify({"error": "No image provided"}), 400
 
-    # Decode the image
-    nparr = np.frombuffer(base64.b64decode(image_data), np.uint8)
-    frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-    # Process the image
-    image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    results = pose.process(image)
-
-    # Analyze pose landmarks
-    if results.pose_landmarks:
-        # Here you can calculate angles and provide feedback
-        return jsonify({'message': 'Pose analyzed successfully'})
-    else:
-        return jsonify({'error': 'No pose landmarks detected'}), 400
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    # 調用核心邏輯處理圖像
+    result = pose_processor.process_image(image)
+    return jsonify(result), 200
