@@ -6,27 +6,27 @@ import (
 	"net/http"
 )
 
+var AnalyzeService *services.AnalyzeService
+
 func AnalyzeHandler(c *gin.Context) {
 	// 獲取上傳的文件
 	file, err := c.FormFile("image")
 	if err != nil {
-		// 打印錯誤
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No image provided"})
 		return
 	}
 
-	openedFile, openErr := file.Open()
-	if openErr != nil {
-		// 打印文件打開錯誤
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open file"})
+	// 打開文件
+	openedFile, err := file.Open()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open image"})
 		return
 	}
 	defer openedFile.Close()
 
-	// 調用業務邏輯
-	result, err := services.AnalyzePose(openedFile)
+	// 調用 Service 層進行分析
+	result, err := AnalyzeService.AnalyzePose(openedFile, file.Filename)
 	if err != nil {
-		// 打印業務邏輯的錯誤
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
