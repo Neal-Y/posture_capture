@@ -5,10 +5,18 @@ import (
 	"io"
 )
 
-// AnalyzePose processes the image and calls the AI service
-func AnalyzePose(file io.Reader) (map[string]interface{}, error) {
+type AnalyzeService struct {
+	Client *clients.AIClient
+}
+
+func NewAnalyzeService(client *clients.AIClient) *AnalyzeService {
+	return &AnalyzeService{Client: client}
+}
+
+// AnalyzePose 處理圖像並調用 AI 微服務
+func (s *AnalyzeService) AnalyzePose(file io.Reader, filename string) (map[string]interface{}, error) {
 	// 調用 AI 微服務
-	result, err := clients.AnalyzePose(file)
+	result, err := s.Client.AnalyzePose(file, filename)
 	if err != nil {
 		return nil, err
 	}
