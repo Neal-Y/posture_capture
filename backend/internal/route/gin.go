@@ -1,34 +1,33 @@
 package route
 
 import (
+	"backend/configs"
 	"backend/internal/clients"
 	"backend/internal/handlers"
 	"backend/internal/services"
 	"github.com/gin-gonic/gin"
-	"time"
 )
 
 // InitGinServer 初始化 Gin 服務器
-func InitGinServer() (*gin.Engine, error) {
-	server := GinRouter()
-	err := server.Run("127.0.0.1:8080")
-
-	return server, err
+func InitGinServer() (server *gin.Engine, err error) {
+	server = GinRoute()
+	// 啟動服務
+	err = server.Run(":8080")
+	return
 }
 
-// GinRouter 註冊路由和初始化依賴
-func GinRouter() *gin.Engine {
-	server := gin.New()
+func GinRoute() (server *gin.Engine) {
+	server = gin.New()
 	server.Use(gin.Logger())
 
 	// 初始化依賴
-	client := clients.NewAIClient("http://localhost:8000", 10*time.Second)
+	client := clients.NewAIClient(configs.AppConfig.AIServiceURL, configs.AppConfig.HTTPClient)
 	analyzeService := services.NewAnalyzeService(client)
+	analyzeHandler := handlers.NewAnalyzeHandler(analyzeService)
 
-	// 註冊處理器
-	handlers.AnalyzeService = analyzeService
+	// 註冊路由
 	api := server.Group("/api")
-	api.POST("/analyze", handlers.AnalyzeHandler)
+	api.POST("/analyze", analyzeHandler.Analyze)
 
 	return server
 }
