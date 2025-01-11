@@ -7,22 +7,23 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
-	"time"
 )
 
-// AIClient 負責與 AI 微服務進行通信
+// AIClientInterface 定義 AI 客戶端的接口
+type AIClientInterface interface {
+	AnalyzePose(image io.Reader, filename string) (map[string]interface{}, error)
+}
+
 type AIClient struct {
 	BaseURL    string
 	HTTPClient *http.Client
 }
 
 // NewAIClient 初始化 AI 微服務客戶端
-func NewAIClient(baseURL string, timeout time.Duration) *AIClient {
+func NewAIClient(baseURL string, httpClient *http.Client) AIClientInterface {
 	return &AIClient{
-		BaseURL: baseURL,
-		HTTPClient: &http.Client{
-			Timeout: timeout,
-		},
+		BaseURL:    baseURL,
+		HTTPClient: httpClient,
 	}
 }
 
