@@ -5,11 +5,18 @@ import (
 	"io"
 )
 
-type AnalyzeService struct {
-	Client *clients.AIClient
+// AnalyzeServiceInterface 定義業務邏輯的接口
+type AnalyzeServiceInterface interface {
+	AnalyzePose(image io.Reader, filename string) (map[string]interface{}, error)
 }
 
-func NewAnalyzeService(client *clients.AIClient) *AnalyzeService {
+// AnalyzeService 提供業務邏輯實現
+type AnalyzeService struct {
+	Client clients.AIClientInterface
+}
+
+// NewAnalyzeService 創建 AnalyzeService 的新實例
+func NewAnalyzeService(client clients.AIClientInterface) AnalyzeServiceInterface {
 	return &AnalyzeService{Client: client}
 }
 
