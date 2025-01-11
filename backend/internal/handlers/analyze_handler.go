@@ -6,9 +6,19 @@ import (
 	"net/http"
 )
 
-var AnalyzeService *services.AnalyzeService
+type AnalyzeHandler struct {
+	AnalyzeService services.AnalyzeServiceInterface
+}
 
-func AnalyzeHandler(c *gin.Context) {
+// NewAnalyzeHandler 創建新的 AnalyzeHandler 實例
+func NewAnalyzeHandler(service services.AnalyzeServiceInterface) *AnalyzeHandler {
+	return &AnalyzeHandler{
+		AnalyzeService: service,
+	}
+}
+
+// Analyze 處理 /analyze 請求
+func (h *AnalyzeHandler) Analyze(c *gin.Context) {
 	// 獲取上傳的文件
 	file, err := c.FormFile("image")
 	if err != nil {
@@ -25,7 +35,7 @@ func AnalyzeHandler(c *gin.Context) {
 	defer openedFile.Close()
 
 	// 調用 Service 層進行分析
-	result, err := AnalyzeService.AnalyzePose(openedFile, file.Filename)
+	result, err := h.AnalyzeService.AnalyzePose(openedFile, file.Filename)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
