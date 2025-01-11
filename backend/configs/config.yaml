@@ -1,6 +1,12 @@
 # config.yaml - 配置示例
-server:
-  port: 8080
-
 logging:
   level: "info"
+
+ai_service:
+  url: "http://localhost:8000"
+  timeout: 10s
+
+server:
+  host: "127.0.0.1"
+  port: 8080
+
