@@ -2,15 +2,15 @@ package services
 
 import (
 	"backend/internal/clients"
-	"io"
+	"errors"
+	"mime/multipart"
 )
 
 // AnalyzeServiceInterface 定義業務邏輯的接口
 type AnalyzeServiceInterface interface {
-	AnalyzePose(image io.Reader, filename string) (map[string]interface{}, error)
+	ProcessFile(file *multipart.FileHeader) (map[string]interface{}, error)
 }
 
-// AnalyzeService 提供業務邏輯實現
 type AnalyzeService struct {
 	Client clients.AIClientInterface
 }
@@ -20,13 +20,15 @@ func NewAnalyzeService(client clients.AIClientInterface) AnalyzeServiceInterface
 	return &AnalyzeService{Client: client}
 }
 
-// AnalyzePose 處理圖像並調用 AI 微服務
-func (s *AnalyzeService) AnalyzePose(file io.Reader, filename string) (map[string]interface{}, error) {
-	// 調用 AI 微服務
-	result, err := s.Client.AnalyzePose(file, filename)
+// ProcessFile 處理文件並調用 AI 微服務
+func (s *AnalyzeService) ProcessFile(file *multipart.FileHeader) (map[string]interface{}, error) {
+	// 打開文件
+	openedFile, err := file.Open()
 	if err != nil {
-		return nil, err
+		return nil, errors.New("failed to open file")
 	}
+	defer openedFile.Close()
 
-	return result, nil
+	// 調用 AI 微服務進行分析
+	return s.Client.AnalyzePose(openedFile, file.Filename)
 }
