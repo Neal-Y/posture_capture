@@ -23,11 +23,10 @@ func GinRoute() (server *gin.Engine) {
 	// 初始化依賴
 	client := clients.NewAIClient(configs.AppConfig.AIServiceURL, configs.AppConfig.HTTPClient)
 	analyzeService := services.NewAnalyzeService(client)
-	analyzeHandler := handlers.NewAnalyzeHandler(analyzeService)
 
 	// 註冊路由
 	api := server.Group("/api")
-	api.POST("/analyze", analyzeHandler.Analyze)
+	handlers.RegisterAnalyzeRoutes(api, analyzeService)
 
 	return server
 }
