@@ -13,11 +13,21 @@ class ResultFormatter:
         return {"movement_type": movement_type, "phases": formatted_phases}
 
     def generate_suggestions(self, phase_name, movement_type):
-        if movement_type == "deadlift":
-            if phase_name == "Setup":
-                return ["Ensure back is straight", "Position hips properly"]
-            elif phase_name == "Transition":
-                return ["Keep bar path straight"]
-            elif phase_name == "Lockout":
-                return ["Good finish position"]
-        return ["No suggestions available"]
+        suggestions_map = {
+            "deadlift": {
+                "Setup": ["Ensure back is straight", "Position hips properly"],
+                "Transition": ["Keep bar path straight"],
+                "Lockout": ["Good finish position"]
+            },
+            "squat": {
+                "Setup": ["Brace core", "Keep chest up"],
+                "Transition": ["Control descent"],
+                "Lockout": ["Drive through heels"]
+            },
+            "bench_press": {
+                "Setup": ["Grip the bar properly", "Position feet flat"],
+                "Transition": ["Lower bar to chest"],
+                "Lockout": ["Fully extend arms"]
+            }
+        }
+        return suggestions_map.get(movement_type, {}).get(phase_name, ["No suggestions available"])
