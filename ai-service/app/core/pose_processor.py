@@ -1,15 +1,16 @@
 from app.models.pose_estimator import PoseEstimator
-from app.core.side_detector import weighted_side_detection, determine_side_from_multiple_frames
-from app.core.phase_analyzer import PhaseAnalyzer
+from app.core.side_detector import determine_side_from_multiple_frames
 
 class PoseProcessor:
+    """
+    處理影片幀數，並提取骨架資訊
+    """
     def __init__(self):
         self.pose_estimator = PoseEstimator()
-        self.phase_analyzer = PhaseAnalyzer()
 
-    def process_sequence(self, frames, movement_type):
+    def process_sequence(self, frames):
         side_results = []
-        phase_results = []
+        all_landmarks = []
 
         for frame in frames:
             landmarks = self.pose_estimator.detect_pose(frame)
@@ -17,14 +18,16 @@ class PoseProcessor:
                 side_results.append("unknown")
                 continue
 
-            # 判斷左右側
-            side = weighted_side_detection(landmarks)
-            side_results.append(side)
+            all_landmarks.append(landmarks)
+            side_results.append(self._detect_side(landmarks))
 
-            # 動作分階段
-            phase = self.phase_analyzer.analyze_phases([landmarks], movement_type)
-            phase_results.append({"landmarks": landmarks, "side": side, "phase": phase})
+        if not all_landmarks:
+            return "unknown", []
 
-        # 多幀平滑結果
         final_side = determine_side_from_multiple_frames(side_results)
-        return final_side, phase_results
+        return final_side, all_landmarks
+
+    def _detect_side(self, landmarks):
+        has_left = all(key in landmarks for key in ["left_hip", "left_knee", "left_shoulder", "left_ankle"])
+        has_right = all(key in landmarks for key in ["right_hip", "right_knee", "right_shoulder", "right_ankle"])
+        return "left" if has_left and not has_right else "right" if has_right and not has_left else "unknown"
