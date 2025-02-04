@@ -1,38 +1,33 @@
 from flask import Blueprint, request, jsonify
-from app.core.pose_processor import PoseProcessor
+from app.services.movement_service import MovementService
 from app.utils.video_utils import extract_frames
 
 pose_api = Blueprint("pose_api", __name__)
-pose_processor = PoseProcessor()
+movement_service = MovementService()
 
 @pose_api.route("/analyze/video", methods=["POST"])
 def analyze_video():
+    """
+    影片分析 API，處理影片上傳並調用 MovementService 進行分析
+    """
     try:
-        # 接收並保存上傳的影片
         video_file = request.files.get("video")
         if not video_file:
-            return {"error": "No video file provided"}, 400
+            return jsonify({"error": "No video file provided"}), 400
 
-        video_path = "/tmp/uploaded_video.mp4"  # 保存的臨時路徑
+        movement_type = request.form.get("movement_type", "unknown")
+        video_path = "/tmp/uploaded_video.mp4"
         video_file.save(video_path)
 
-
-        # 提取幀
+        # 提取幀數
         frames = extract_frames(video_path, fps=5)
         if not frames:
-            return {"error": "No frames extracted from the video"}, 400
+            return jsonify({"error": "No frames extracted from the video"}), 400
 
-        # 動作類型
-        movement_type = request.form.get("movement_type", "unknown")
+        # 調用 MovementService 進行分析
+        response = movement_service.analyze_movement(frames, movement_type)
 
-        # 分析幀序列
-        final_side, results = pose_processor.process_sequence(frames, movement_type)
-
-        # 返回結果
-        response = {
-            "side": final_side,
-            "phases": results
-        }
         return jsonify(response)
+
     except Exception as e:
-        return {"error": str(e)}, 500
+        return jsonify({"error": str(e)}), 500
