@@ -1,9 +1,12 @@
 import cv2
 
-def extract_frames(video_path, fps=5):
+def extract_frames(video_file, fps=5):
     """
     提取影片的幀序列
     """
+    video_path = "/tmp/uploaded_video.mp4"
+    video_file.save(video_path)
+
     frames = []
     cap = cv2.VideoCapture(video_path)
     frame_rate = int(cap.get(cv2.CAP_PROP_FPS))

@@ -16,11 +16,11 @@ def analyze_video():
             return jsonify({"error": "No video file provided"}), 400
 
         movement_type = request.form.get("movement_type", "unknown")
-        video_path = "/tmp/uploaded_video.mp4"
-        video_file.save(video_path)
+        if movement_type not in ["deadlift", "squat", "bench_press"]:
+            return jsonify({"error": "Invalid movement type"}), 400
 
         # 提取幀數
-        frames = extract_frames(video_path, fps=5)
+        frames = extract_frames(video_file, fps=5)
         if not frames:
             return jsonify({"error": "No frames extracted from the video"}), 400
 
