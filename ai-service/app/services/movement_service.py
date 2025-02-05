@@ -18,7 +18,7 @@ class MovementService:
         if not frames:
             return {"error": "No frames extracted from the video"}
 
-        final_side, landmarks_list = self.pose_processor.process_sequence(frames)
+        side_landmarks_list = self.pose_processor.process_sequence(frames)
 
         if movement_type == "deadlift":
             analyzer = DeadliftAnalyzer()
@@ -29,5 +29,5 @@ class MovementService:
         else:
             return {"error": "Unknown movement type"}
 
-        phases = analyzer.analyze(landmarks_list, final_side)
+        phases = analyzer.analyze(side_landmarks_list)
         return self.result_formatter.format_report(phases, movement_type)
