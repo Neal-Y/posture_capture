@@ -1,5 +1,6 @@
 from app.core.pose_processor import PoseProcessor
 from app.models.result_formatter import ResultFormatter
+from app.utils.video_utils import extract_frames
 from app.services.movement_analyzers.deadlift_analyzer import DeadliftAnalyzer
 from app.services.movement_analyzers.squat_analyzer import SquatAnalyzer
 from app.services.movement_analyzers.bench_press_analyzer import BenchPressAnalyzer
@@ -12,10 +13,11 @@ class MovementService:
         self.pose_processor = PoseProcessor()
         self.result_formatter = ResultFormatter()
 
-    def analyze_movement(self, frames, movement_type):
-        """
-        根據 movement_type 選擇對應的動作分析邏輯
-        """
+    def analyze_movement(self, video_file, movement_type):
+        frames = extract_frames(video_file, fps=5)
+        if not frames:
+            return {"error": "No frames extracted from the video"}
+
         final_side, landmarks_list = self.pose_processor.process_sequence(frames)
 
         if movement_type == "deadlift":
@@ -27,5 +29,5 @@ class MovementService:
         else:
             return {"error": "Unknown movement type"}
 
-        phases = analyzer.analyze(landmarks_list)
+        phases = analyzer.analyze(landmarks_list, final_side)
         return self.result_formatter.format_report(phases, movement_type)
