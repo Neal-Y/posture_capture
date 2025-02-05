@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.services.movement_service import MovementService
-from app.utils.video_utils import extract_frames
+
 
 pose_api = Blueprint("pose_api", __name__)
 movement_service = MovementService()
@@ -19,13 +19,8 @@ def analyze_video():
         if movement_type not in ["deadlift", "squat", "bench_press"]:
             return jsonify({"error": "Invalid movement type"}), 400
 
-        # 提取幀數
-        frames = extract_frames(video_file, fps=5)
-        if not frames:
-            return jsonify({"error": "No frames extracted from the video"}), 400
-
         # 調用 MovementService 進行分析
-        response = movement_service.analyze_movement(frames, movement_type)
+        response = movement_service.analyze_movement(video_file, movement_type)
 
         return jsonify(response)
 
