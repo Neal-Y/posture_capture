@@ -21,14 +21,14 @@ def weighted_side_detection(landmarks):
             right_weight += coords["x"] * weight - coords.get("z", 0) * 0.1
             right_count += 1
 
-    if left_count > right_count + 2:
+    if left_count > (right_count + 2):
         return "left"
-    elif right_count > left_count + 2:
+    elif right_count > (left_count + 2):
         return "right"
 
     return "left" if left_weight >= right_weight else "right"
 
-def determine_side_from_multiple_frames(sides, prev_side="unknown", window_size=5):
+def determine_side_from_multiple_frames(sides, prev_side, window_size=5):
     if not sides:
         return prev_side
 
