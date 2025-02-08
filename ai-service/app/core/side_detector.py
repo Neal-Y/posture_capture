@@ -2,16 +2,14 @@ from collections import deque
 
 def weighted_side_detection(landmarks):
     weights = {
-        "shoulder": 0.4,
-        "hip": 0.3,
-        "knee": 0.2,
-        "ankle": 0.1
+        "shoulder": 0.4, "hip": 0.3, "knee": 0.2, "ankle": 0.1,
+        "elbow": 0.2, "wrist": 0.15, "foot": 0.05, "eye": 0.05, "ear": 0.05
     }
     left_weight, right_weight = 0, 0
     left_count, right_count = 0, 0
 
     for point, coords in landmarks.items():
-        body_part = point.split("_")[1]
+        body_part = point.split("_")[-1]  # 取得部位名稱，如 shoulder, knee, wrist
         weight = weights.get(body_part, 0.1)
 
         if "left" in point:
@@ -69,5 +67,5 @@ def filter_landmarks_by_side(landmarks, final_side):
     return {
         key.replace(f"{final_side}_", ""): value  
         for key, value in landmarks.items()
-        if key.startswith(final_side)
+        if key.startswith(final_side) or key == "nose"
     }
